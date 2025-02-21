@@ -1,0 +1,32 @@
+name: Deploy para AWS S3
+
+on:
+  push:
+    branches:
+      - main  # ou sua branch principal
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Fazer o checkout do repositório
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      # 2️⃣ Configurar as credenciais da AWS usando os SECRETS
+      - name: Configurar AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # 3️⃣ Sincronizar arquivos com o S3
+      - name: Sincronizar arquivos com S3
+        run: |
+          aws s3 sync . s3://${{ secrets.S3_BUCKET_NAME }} --exclude ".git/*" --exclude ".github/*" --delete
+
+      # 4️⃣ Feedback no GitHub Actions
+      - name: Finalização
+        run: echo "🚀 Upload concluído para o bucket ${{ secrets.S3_BUCKET_NAME }}"

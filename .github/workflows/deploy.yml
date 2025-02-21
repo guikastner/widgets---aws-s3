@@ -3,7 +3,7 @@ name: Deploy para AWS S3
 on:
   push:
     branches:
-      - main  # ou sua branch principal
+      - master # ou sua branch principal
 
 jobs:
   deploy:
